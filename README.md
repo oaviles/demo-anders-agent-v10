@@ -15,7 +15,7 @@ A minimal C# console application that creates and runs an AI agent hosted in **A
 
 ## Prerequisites
 
-- [.NET 9 SDK](https://dotnet.microsoft.com/download)
+- [.NET 8 SDK](https://dotnet.microsoft.com/download)
 - An **Azure AI Foundry** project with a model deployment (e.g. `gpt-4.1`)
 - Azure CLI (`az login`) **or** any credential supported by `DefaultAzureCredential`
 
