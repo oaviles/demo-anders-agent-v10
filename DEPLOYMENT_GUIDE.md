@@ -14,6 +14,8 @@ This guide shows how to deploy the `SimpleFoundryAgent` to Azure AI Foundry usin
 
 ```powershell
 az login
+
+az login --use-device-code
 ```
 
 5. A valid Azure AI Foundry project endpoint, for example:
