@@ -15,7 +15,7 @@
     <!-- Azure Identity for DefaultAzureCredential -->
     <PackageReference Include="Azure.Identity" Version="1.*" />
     <!-- Microsoft Agents AI - Azure AI integration -->
-    <PackageReference Include="Microsoft.Agents.AI.AzureAI" Version="*-*" />
+    <PackageReference Include="Microsoft.Agents.AI.AzureAI" Version="1.0.0-rc4" />
         <!-- Pinned to 10.3.0: Agents SDK rc4 was compiled against this version.
           10.4.1 removed HostedMcpServerTool.AuthorizationToken which causes a
           MissingMethodException at runtime when registering tools. -->
