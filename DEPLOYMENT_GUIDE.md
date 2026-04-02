@@ -8,7 +8,7 @@ This guide shows how to deploy the `SimpleFoundryAgent` to Azure AI Foundry usin
 ## Prerequisites
 
 1. Azure subscription with access to your Azure AI Foundry project.
-2. `.NET 9 SDK` installed.
+2. `.NET 8 SDK` installed.
 3. `Azure CLI` installed.
 4. Signed in to Azure CLI:
 
