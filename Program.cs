@@ -1,10 +1,11 @@
 using System.ComponentModel;
 using Azure.AI.Projects;
+using Azure.AI.Projects.Agents;
 using Azure.Identity;
 using Microsoft.Agents.AI;
+using Microsoft.Agents.AI.AzureAI;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
 
 namespace MsFoundryAgent;
 
@@ -43,13 +44,15 @@ public static class Program
         string agentName = config["Foundry:AgentName"] ?? DefaultAgentName;
         string agentInstructions = config["Foundry:AgentInstructions"] ?? DefaultAgentInstructions;
 
+        var credential = new DefaultAzureCredential();
+
         var aiProjectClient = new AIProjectClient(
             new Uri(projectEndpoint),
-            new DefaultAzureCredential());
+            credential);
 
         Console.WriteLine($"Creating agent '{agentName}' on Azure AI Foundry...");
 
-        ChatClientAgent agent = await aiProjectClient.CreateAIAgentAsync(
+        FoundryAgent agent = await aiProjectClient.CreateAIAgentAsync(
             name: agentName,
             model: modelDeployment,
             instructions: agentInstructions,
@@ -65,7 +68,7 @@ public static class Program
 
         if (args.Length > 0 && args[0].Equals("verify", StringComparison.OrdinalIgnoreCase))
         {
-            ChatClientAgent found = await aiProjectClient.GetAIAgentAsync(agentName, tools: [AIFunctionFactory.Create(GetWeather)]);
+            FoundryAgent found = await aiProjectClient.GetAIAgentAsync(agentName, tools: [AIFunctionFactory.Create(GetWeather)]);
             Console.WriteLine("Agent verification succeeded.");
             Console.WriteLine($"Name: {found.Name}");
             Console.WriteLine($"Model: {modelDeployment}");
@@ -76,7 +79,7 @@ public static class Program
 
         Console.WriteLine("Agent created. Starting multi-turn conversation (type 'quit' to exit).\n");
 
-        var history = new List<ChatMessage>();
+        AgentSession session = await agent.CreateSessionAsync();
 
         while (true)
         {
@@ -89,27 +92,23 @@ public static class Program
                 break;
             }
 
-            history.Add(new ChatMessage(ChatRole.User, userInput));
-
             Console.Write("Agent: ");
-            var assistantText = new System.Text.StringBuilder();
-            await foreach (AgentResponseUpdate update in agent.RunStreamingAsync(history))
+            await foreach (AgentResponseUpdate update in agent.RunStreamingAsync(
+                new ChatMessage(ChatRole.User, userInput), session, null, default))
             {
                 if (!string.IsNullOrEmpty(update.Text))
                 {
                     Console.Write(update.Text);
-                    assistantText.Append(update.Text);
                 }
             }
             Console.WriteLine("\n");
-
-            // Append the assistant reply so future turns have full context
-            if (assistantText.Length > 0)
-                history.Add(new ChatMessage(ChatRole.Assistant, assistantText.ToString()));
         }
 
         Console.WriteLine("Cleaning up agent...");
-        await aiProjectClient.Agents.DeleteAgentAsync(agent.Name);
+        var agentAdminClient = new AgentAdministrationClient(
+            new Uri(projectEndpoint),
+            credential);
+        await agentAdminClient.DeleteAgentAsync(agent.Name);
         Console.WriteLine("Done.");
     }
 }
