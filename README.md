@@ -8,7 +8,6 @@ A minimal C# console application that creates and runs an AI agent hosted in **A
 |---|---|
 | Agent hosting | Azure AI Foundry (server-side agent) |
 | Auth | `DefaultAzureCredential` (passwordless) |
-| Function calling | `GetWeather` tool via `AIFunctionFactory` |
 | Multi-turn chat | Local message history passed across turns |
 | Streaming | `RunStreamingAsync` for real-time output |
 | Deployment mode | `dotnet run -- deploy` leaves the agent in Foundry |
@@ -75,11 +74,11 @@ Example session:
 Creating agent 'SimpleFoundryAgent' on Azure AI Foundry...
 Agent created. Starting multi-turn conversation (type 'quit' to exit).
 
-You: What's the weather like in Paris?
-Agent: The weather in Paris is cloudy with a high of 22°C.
+You: Hello, how can you help me?
+Agent: I'm an analytical AI agent specialized in reading, understanding, and extracting insights from provided information. I can help you analyze data and information.
 
-You: And in Tokyo?
-Agent: The weather in Tokyo is sunny with a high of 28°C.
+You: Can you summarize this text for me?
+Agent: Of course! Please provide the text you'd like me to summarize.
 
 You: quit
 Cleaning up agent...
@@ -119,7 +118,7 @@ public static decimal GetStockPrice(
 }
 
 // Register it when creating the agent:
-tools: [AIFunctionFactory.Create(GetWeather), AIFunctionFactory.Create(GetStockPrice)]
+tools: [AIFunctionFactory.Create(GetStockPrice)]
 ```
 
 ## Bash Deployment Script
@@ -137,7 +136,7 @@ Optional environment variables:
 
 ```bash
 export FOUNDRY_AGENT_NAME="SimpleFoundryAgent"
-export FOUNDRY_AGENT_INSTRUCTIONS="You are a helpful assistant. When the user asks about the weather, use the GetWeather tool."
+export FOUNDRY_AGENT_INSTRUCTIONS="You are an analytical AI agent specialized in reading, understanding, and extracting insights from provided information."
 ```
 
 Run the deployment:

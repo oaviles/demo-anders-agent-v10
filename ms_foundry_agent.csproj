@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <!-- Azure AI Foundry SDK - stable GA -->
-    <PackageReference Include="Azure.AI.Projects" Version="2.0.0" />
+    <PackageReference Include="Azure.AI.Projects" Version="2.0.0-beta.2" />
     <PackageReference Include="Azure.AI.Projects.OpenAI" Version="2.0.0-beta.1" />
     <!-- Azure Identity for DefaultAzureCredential -->
     <PackageReference Include="Azure.Identity" Version="1.*" />

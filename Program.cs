@@ -15,19 +15,6 @@ public static class Program
     private const string DefaultAgentInstructions =
         "You are an analytical AI agent specialized in reading, understanding, and extracting insights from provided information.";
 
-    // -----------------------------------------------------------------------
-    // Tool: a simple weather stub to demonstrate function calling
-    // -----------------------------------------------------------------------
-    [Description("Get the current weather for a given location.")]
-    public static string GetWeather(
-        [Description("The city or location name, e.g. 'Seattle'")] string location)
-    {
-        var rand = new Random();
-        string[] conditions = ["sunny", "cloudy", "rainy", "stormy"];
-        return $"The weather in {location} is {conditions[rand.Next(conditions.Length)]} " +
-               $"with a high of {rand.Next(10, 35)}°C.";
-    }
-
     public static async Task Main(string[] args)
     {
         IConfiguration config = new ConfigurationBuilder()
@@ -57,7 +44,7 @@ public static class Program
             model: modelDeployment,
             instructions: agentInstructions,
             description: null,
-            tools: [AIFunctionFactory.Create(GetWeather)]);
+            tools: []);
 
         if (args.Length > 0 && args[0].Equals("deploy", StringComparison.OrdinalIgnoreCase))
         {
@@ -68,7 +55,7 @@ public static class Program
 
         if (args.Length > 0 && args[0].Equals("verify", StringComparison.OrdinalIgnoreCase))
         {
-            FoundryAgent found = await aiProjectClient.GetAIAgentAsync(agentName, tools: [AIFunctionFactory.Create(GetWeather)]);
+            FoundryAgent found = await aiProjectClient.GetAIAgentAsync(agentName, tools: []);
             Console.WriteLine("Agent verification succeeded.");
             Console.WriteLine($"Name: {found.Name}");
             Console.WriteLine($"Model: {modelDeployment}");
@@ -104,11 +91,6 @@ public static class Program
             Console.WriteLine("\n");
         }
 
-        Console.WriteLine("Cleaning up agent...");
-        var agentAdminClient = new AgentAdministrationClient(
-            new Uri(projectEndpoint),
-            credential);
-        await agentAdminClient.DeleteAgentAsync(agent.Name);
-        Console.WriteLine("Done.");
+        Console.WriteLine("Session ended. Agent was not deleted.");
     }
 }
