@@ -1,0 +1,30 @@
+name: Deploy Foundry Agent
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy agent
+        env:
+          FOUNDRY_PROJECT_ENDPOINT: ${{ secrets.FOUNDRY_PROJECT_ENDPOINT }}
+          FOUNDRY_MODEL_DEPLOYMENT_NAME: ${{ vars.FOUNDRY_MODEL_DEPLOYMENT_NAME }}
+        run: |
+          chmod +x ./deploy-foundry-agent.sh
+          ./deploy-foundry-agent.sh
